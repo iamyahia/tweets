@@ -23,6 +23,16 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
+export function meta() {
+  return [
+    {
+      charset: "utf-8",
+      title: "Quote Wall App",
+      viewport: "width=device-width,initial-scale=1",
+    },
+  ];
+}
+
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -32,7 +42,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className="bg-purple-100 relative px-5">
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -42,7 +52,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  return (
+    <div className="mt-20 w-full max-w-screen-lg mx-auto">
+      <Outlet />
+    </div>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
