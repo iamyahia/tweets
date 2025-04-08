@@ -1,8 +1,11 @@
-import { Link } from "react-router";
+import { Link, type LoaderFunctionArgs } from "react-router";
 
 import type { Route } from "./+types/_index";
+import { requireUserId } from "~/utils/session.server";
 
-export const loader = async () => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  await requireUserId(request, new URL(request.url).pathname);
+
   return {
     quotes: [
       {
