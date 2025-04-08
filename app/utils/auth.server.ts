@@ -5,6 +5,7 @@ import { prisma } from "./prisma.server";
 import { createUser } from "./users.server";
 
 import type { RegisterForm, LoginForm } from "~/types/auth.types.server";
+import { createUserSession } from "./session.server";
 
 export const register = async (form: RegisterForm) => {
   // Check if email is exists
@@ -12,7 +13,6 @@ export const register = async (form: RegisterForm) => {
     where: { email: form.email },
   });
 
-  console.log("exists", emailExists);
   if (emailExists)
     return data(
       {
@@ -21,6 +21,7 @@ export const register = async (form: RegisterForm) => {
       { status: 400 }
     );
 
+  //! There's no validation for the fields, so we can assume that the user has filled in all the fields correctly.
   // Create user
   const newUser = await createUser(form);
   if (!newUser)
@@ -37,8 +38,7 @@ export const register = async (form: RegisterForm) => {
       { status: 400 }
     );
 
-  // create new session + redirect user to home page
-  return null;
+  return createUserSession(newUser.id, "/");
 };
 
 export const login = async (form: LoginForm) => {
@@ -53,6 +53,5 @@ export const login = async (form: LoginForm) => {
   if (!user || !(await bcrypt.compare(form.password, user.password)))
     return data({ error: "Incorrect Login" }, { status: 400 });
 
-  // create user session + redirect user to home page
-  return null;
+  return createUserSession(user.id, "/");
 };
