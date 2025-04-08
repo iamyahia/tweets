@@ -41,17 +41,15 @@ export const register = async (form: RegisterForm) => {
   return createUserSession(newUser.id, "/");
 };
 
-export const login = async (form: LoginForm) => {
-  // Check if email is exists
+export const login = async (form: LoginForm, redirectTo: string) => {
   const user = await prisma.user.findUnique({
     where: {
       email: form.email,
     },
   });
 
-  // Check if password is correct
   if (!user || !(await bcrypt.compare(form.password, user.password)))
     return data({ error: "Incorrect Login" }, { status: 400 });
 
-  return createUserSession(user.id, "/");
+  return createUserSession(user.id, redirectTo);
 };
