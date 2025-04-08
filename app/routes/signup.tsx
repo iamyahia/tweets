@@ -1,11 +1,38 @@
-import { Link } from "react-router";
+import {
+  Form,
+  Link,
+  redirect,
+  type ActionFunctionArgs,
+  type LoaderFunctionArgs,
+} from "react-router";
+
+import { register } from "~/utils/auth.server";
+import { requireUserId } from "~/utils/session.server";
+
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const user = await requireUserId(request);
+  if (user) throw redirect("/");
+  return null;
+};
+
+export const action = async ({ request }: ActionFunctionArgs) => {
+  const formData = await request.formData();
+
+  //! There's no validation for the fields, so we can assume that the user has filled in all the fields correctly.
+  return await register({
+    email: formData.get("email") as string,
+    password: formData.get("password") as string,
+    firstName: formData.get("firstName") as string,
+    lastName: formData.get("lastName") as string,
+  });
+};
 
 export default function SignUp() {
   return (
     <div className="min-h-screen flex items-center justify-center ">
       <div className="max-w-md w-full bg-white p-8 rounded shadow">
         <h2 className="text-2xl font-bold mb-6 text-center">Sign Up</h2>
-        <form>
+        <Form method="POST">
           <div className="mb-4">
             <label htmlFor="firstName" className="block text-gray-700">
               First Name
@@ -71,7 +98,7 @@ export default function SignUp() {
           >
             Log In
           </button>
-        </form>
+        </Form>
       </div>
     </div>
   );

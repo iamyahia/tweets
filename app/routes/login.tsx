@@ -1,11 +1,54 @@
-import { Link } from "react-router";
+import { useEffect, useState } from "react";
+import {
+  Form,
+  Link,
+  redirect,
+  useActionData,
+  type ActionFunctionArgs,
+  type LoaderFunctionArgs,
+} from "react-router";
+
+import { login } from "~/utils/auth.server";
+import { requireUserId } from "~/utils/session.server";
+
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const user = await requireUserId(request);
+  if (user) throw redirect("/");
+  return null;
+};
+
+export const action = async ({ request }: ActionFunctionArgs) => {
+  const formData = await request.formData();
+
+  const redirectTo = new URL(request.url).searchParams.get("redirectTo") || "/";
+  //! There's no validation for the fields, so we can assume that the user has filled in all the fields correctly.
+  return await login(
+    {
+      email: formData.get("email") as string,
+      password: formData.get("password") as string,
+    },
+    redirectTo
+  );
+};
 
 export default function Login() {
+  const actionData = useActionData();
+  const [formErrors, setFormErrors] = useState(actionData?.error || "");
+
+  useEffect(() => {
+    if (actionData?.error) {
+      setFormErrors(actionData.error);
+    }
+  }, [actionData]);
+
   return (
     <div className="min-h-screen flex items-center justify-center ">
       <div className="max-w-md w-full bg-white p-8 rounded shadow">
         <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
-        <form>
+        {formErrors && (
+          <div className="mb-4 text-red-500 text-center">{formErrors}</div>
+        )}
+        <Form method="POST">
           <div className="mb-4">
             <label htmlFor="email" className="block text-gray-700">
               Email Address
@@ -45,7 +88,7 @@ export default function Login() {
           >
             Log In
           </button>
-        </form>
+        </Form>
       </div>
     </div>
   );
