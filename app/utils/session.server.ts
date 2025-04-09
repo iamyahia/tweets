@@ -1,4 +1,5 @@
 import { createCookieSessionStorage, redirect } from "react-router";
+import { prisma } from "./prisma.server";
 
 const sessionSecret = process.env.SESSION_SECRET;
 if (!sessionSecret) throw new Error("SESSION_SECRET is not set.");
@@ -15,6 +16,20 @@ const storage = createCookieSessionStorage({
   },
 });
 
+async function getUserSession(request: Request) {
+  return await storage.getSession(request.headers.get("Cookie"));
+}
+
+//? This function will be used if we want the current user id.
+async function getUserId(request: Request) {
+  {
+    const session = await getUserSession(request);
+    const userId = session.get("userId");
+    if (!userId || typeof userId !== "string") return null;
+    return userId;
+  }
+}
+
 export const createUserSession = async (userId: string, redirectTo: string) => {
   const session = await storage.getSession();
   session.set("userId", userId);
@@ -30,7 +45,7 @@ export const requireUserId = async (
   request: Request,
   redirectTo: string = new URL(request.url).pathname
 ) => {
-  const session = await storage.getSession(request.headers.get("Cookie"));
+  const session = await getUserSession(request);
   const userId = session.get("userId");
 
   if (!userId || typeof userId !== "string") {
@@ -40,4 +55,23 @@ export const requireUserId = async (
   return userId;
 };
 
-//?
+export const getUser = async (request: Request) => {
+  const userId = await getUserId(request);
+  if (!userId) throw null;
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, email: true, firstName: true, lastName: true },
+    });
+
+    return user;
+  } catch (error) {
+    throw logout(request);
+  }
+};
+
+export const logout = async (request: Request) => {
+  const session = await getUserSession(request);
+  return storage.destroySession(session);
+};

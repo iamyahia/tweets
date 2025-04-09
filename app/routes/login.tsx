@@ -9,12 +9,10 @@ import {
 } from "react-router";
 
 import { login } from "~/utils/auth.server";
-import { requireUserId } from "~/utils/session.server";
+import { getUser } from "~/utils/session.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const user = await requireUserId(request);
-  if (user) throw redirect("/");
-  return null;
+  return (await getUser(request)) ? redirect("/") : null;
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {

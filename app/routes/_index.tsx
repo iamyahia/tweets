@@ -4,7 +4,7 @@ import type { Route } from "./+types/_index";
 import { requireUserId } from "~/utils/session.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  await requireUserId(request, new URL(request.url).pathname);
+  await requireUserId(request);
 
   return {
     quotes: [
