@@ -7,10 +7,10 @@ import {
 } from "react-router";
 
 import { register } from "~/utils/auth.server";
+import { getUserId } from "~/utils/session.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  // TODO: Add a check to see if the user is already logged in and redirect them to the home page.
-  return null;
+  return (await getUserId(request)) ? redirect("/") : null;
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {

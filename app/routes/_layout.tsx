@@ -11,7 +11,9 @@ const LayoutHeader = () => {
           </Link>
           <div className="flex flex-col md:flex-row items-center justify-between gap-x-4 text-blue-50">
             <Link to="login">Login</Link>
-            <Link to="login">Register</Link>
+            <Link to="signup">Register</Link>
+
+            <Link to="dashboard">Dashboard</Link>
 
             <Link to="new-quote">Add A Quote</Link>
             <Link to="logout">Logout</Link>
