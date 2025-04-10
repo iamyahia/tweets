@@ -21,14 +21,14 @@ async function getUserSession(request: Request) {
 }
 
 //? This function will be used if we want the current user id.
-async function getUserId(request: Request) {
+export const getUserId = async (request: Request) => {
   {
     const session = await getUserSession(request);
     const userId = session.get("userId");
     if (!userId || typeof userId !== "string") return null;
     return userId;
   }
-}
+};
 
 export const createUserSession = async (userId: string, redirectTo: string) => {
   const session = await storage.getSession();
@@ -62,7 +62,7 @@ export const getUser = async (request: Request) => {
   try {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { id: true, email: true, firstName: true, lastName: true },
+      select: { email: true, firstName: true, lastName: true },
     });
 
     return user;
