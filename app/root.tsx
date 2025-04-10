@@ -42,7 +42,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className="bg-purple-100 relative px-5">
+      <body className="bg-red-100 relative">
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -53,7 +53,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    <div className="mt-20 w-full max-w-screen-lg mx-auto">
+    <div className="w-full mx-auto">
       <Outlet />
     </div>
   );

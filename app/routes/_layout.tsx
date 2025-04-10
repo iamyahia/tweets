@@ -3,8 +3,8 @@ import { Link, Outlet } from "react-router";
 
 const LayoutHeader = () => {
   return (
-    <div>
-      <nav className="bg-gradient-to-br from-purple-400 via-purple-500 to-purple-500 w-full fixed top-0 left-0 px-5">
+    <>
+      <nav className="bg-gradient-to-br from-red-400 via-red-500 to-red-500 w-full px-5">
         <div className="w-full max-w-screen-lg mx-auto flex justify-between content-center py-3 ">
           <Link className="text-white text-3xl font-bold" to="/">
             Quote Wall
@@ -21,7 +21,7 @@ const LayoutHeader = () => {
         </div>
       </nav>
       <Outlet />
-    </div>
+    </>
   );
 };
 
