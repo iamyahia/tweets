@@ -1,11 +1,10 @@
 import {
-  isRouteErrorResponse,
-  Link,
-  Links,
   Meta,
+  Links,
   Outlet,
   Scripts,
   ScrollRestoration,
+  isRouteErrorResponse,
 } from "react-router";
 
 import type { Route } from "./+types/root";
@@ -44,20 +43,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body className="bg-purple-100 relative px-5">
-        <nav className="bg-gradient-to-br from-purple-400 via-purple-500 to-purple-500 w-full fixed top-0 left-0 px-5">
-          <div className="w-full max-w-screen-lg mx-auto flex justify-between content-center py-3 ">
-            <Link className="text-white text-3xl font-bold" to="/">
-              Quote Wall
-            </Link>
-            <div className="flex flex-col md:flex-row items-center justify-between gap-x-4 text-blue-50">
-              <Link to="login">Login</Link>
-              <Link to="login">Register</Link>
-
-              <Link to="new-quote">Add A Quote</Link>
-              <Link to="logout">Logout</Link>
-            </div>
-          </div>
-        </nav>
         {children}
         <ScrollRestoration />
         <Scripts />
