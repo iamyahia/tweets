@@ -57,7 +57,7 @@ export const requireUserId = async (
 
 export const getUser = async (request: Request) => {
   const userId = await getUserId(request);
-  if (!userId) throw null;
+  if (!userId) return null;
 
   try {
     const user = await prisma.user.findUnique({
@@ -67,11 +67,16 @@ export const getUser = async (request: Request) => {
 
     return user;
   } catch (error) {
+    console.log("cash is run");
     throw logout(request);
   }
 };
 
 export const logout = async (request: Request) => {
   const session = await getUserSession(request);
-  return storage.destroySession(session);
+  return redirect("/login", {
+    headers: {
+      "Set-Cookie": await storage.destroySession(session),
+    },
+  });
 };
