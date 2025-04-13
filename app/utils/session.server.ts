@@ -48,6 +48,7 @@ export const requireUserId = async (
   const session = await getUserSession(request);
   const userId = session.get("userId");
 
+  // TODO: Think about this fn, we use it in multiple place, maybe we can move it to a dedicate utility fn.
   if (!userId || typeof userId !== "string") {
     const searchParams = new URLSearchParams([["redirectTo", redirectTo]]);
     throw redirect(`/login?${searchParams}`);
