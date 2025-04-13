@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { redirect, type LoaderFunctionArgs } from "react-router";
 
-import Modal from "../components/Modal";
+import Modal from "../components/modal";
 
 import { getUserById } from "~/utils/users.server";
 
