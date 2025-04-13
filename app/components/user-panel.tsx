@@ -1,16 +1,20 @@
 import React, { useState, useRef } from "react";
-import { Form } from "react-router";
+import { Form, useNavigate } from "react-router";
 
 export default function UserPanel({
   users,
 }: {
   users: {
+    id: string;
     firstName: string;
     lastName: string;
   }[];
 }) {
   const [showModal, setShowModal] = useState(false);
+
   const formRef = useRef<HTMLFormElement>(null);
+
+  const navigate = useNavigate();
 
   const handleSignOutClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -33,6 +37,7 @@ export default function UserPanel({
             <div
               key={index}
               className="flex items-center p-2 hover:bg-gray-100 rounded"
+              onClick={() => navigate(`/dashboard/tweet/${user.id}`)}
             >
               <img
                 src={`https://i.pravatar.cc/40?img=${index}`}
