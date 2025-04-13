@@ -12,14 +12,54 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-  
+
 model User {
-  id String @id @default(uuid())
-  email String @unique
-  password String  
-  firstName String   
-  lastName String 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt  
+  id             String   @id @default(uuid())
+  email          String   @unique
+  password       String
+  firstName      String
+  lastName       String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  authoredTweets Tweet[]  @relation("AuthoredTweets")
+  tweets         Tweet[]  @relation("ReceivedTweets")
 }
- 
+
+model Tweet {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  author   User   @relation(references: [id], fields: [authorId], "AuthoredTweets")
+  authorId String
+
+  recipient   User   @relation(references: [id], fields: [recipientId], "ReceivedTweets")
+  recipientId String
+
+  style_bg         Color? @default(YELLOW)
+  style_text_color Color? @default(WHITE)
+  style_emoji      Emoji? @default(THUMBS_UP)
+}
+
+// Enums
+enum Emoji {
+  SMILE
+  SAD
+  ANGRY
+  LOVE
+  THUMBS_UP
+}
+
+enum Department {
+  HR
+  IT
+  FINANCE
+  MARKETING
+}
+
+enum Color {
+  RED
+  BLUE
+  WHITE
+  GREEN
+  YELLOW
+}
