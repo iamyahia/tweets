@@ -1,9 +1,10 @@
-import { data } from "react-router";
+import { redirect } from "react-router";
 import bcrypt from "bcryptjs";
 
 import { prisma } from "./prisma.server";
 
 import type { RegisterForm } from "~/types/auth.types.server";
+import { getUserId } from "./session.server";
 
 export const createUser = async (user: RegisterForm) => {
   // Hashing the password
@@ -18,4 +19,23 @@ export const createUser = async (user: RegisterForm) => {
   });
 
   return { id: newUser.id, email: user.email };
+};
+
+export const getOtherUsers = async (request: Request) => {
+  const userId = await getUserId(request);
+
+  if (!userId) throw redirect("/login");
+
+  return await prisma.user.findMany({
+    where: {
+      id: { not: userId },
+    },
+    orderBy: {
+      firstName: "asc",
+    },
+    select: {
+      firstName: true,
+      lastName: true,
+    },
+  });
 };
