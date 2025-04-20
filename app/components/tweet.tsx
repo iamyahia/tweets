@@ -1,25 +1,27 @@
-import type { Tweet, User } from "@prisma/client";
+import type { Tweet } from "@prisma/client";
+import type { TColor, TEmoji } from "~/types/form.types";
 
-import { emojiMap } from "~/utils/constants";
+import { backgroundColorMap, colorMap, emojiMap } from "~/utils/constants";
 
-export default function Tweet({
-  emoji,
-  message,
-  lastName,
-  firstName,
-  textColor,
-  backgroundColor,
-}: {
-  emoji?: "SMILE" | "SAD" | "ANGRY" | "LOVE" | "THUMBS_UP";
+type TweetProps = {
+  emoji: TEmoji;
   message: string;
   lastName: string;
   firstName: string;
-  textColor?: string;
-  backgroundColor: string;
-}) {
+  textColor: TColor;
+  backgroundColor: TColor;
+};
+export default function Tweet({
+  emoji = "THUMBS_UP",
+  message,
+  lastName,
+  firstName,
+  textColor = "WHITE",
+  backgroundColor,
+}: TweetProps) {
   return (
     <div
-      className={`flex ${backgroundColor} p-4 rounded-xl w-full gap-x-2 relative`}
+      className={`flex ${backgroundColorMap[backgroundColor]} p-4 rounded-xl w-full gap-x-2 relative`}
     >
       <img
         src={`https://i.pravatar.cc/40?img=${1}`}
@@ -29,20 +31,16 @@ export default function Tweet({
       <div className="flex flex-col">
         <div>
           <p
-            className={`${
-              textColor || "WHITE"
-            } font-bold text-lg whitespace-pre-wrap break-all`}
+            className={`${colorMap[textColor]} font-bold text-lg whitespace-pre-wrap break-all`}
           >
             {firstName} {lastName}{" "}
           </p>
-          <p
-            className={`${textColor || "WHITE"} whitespace-pre-wrap break-all`}
-          >
+          <p className={`${colorMap[textColor]} whitespace-pre-wrap break-all`}>
             {message}
           </p>
         </div>
         <div className="absolute bottom-4 right-4 bg-white rounded-full h-10 w-10 flex items-center justify-center text-2xl">
-          {emojiMap[emoji] || "THUMBS_UP"}
+          {emojiMap[emoji]}
         </div>
       </div>
     </div>
