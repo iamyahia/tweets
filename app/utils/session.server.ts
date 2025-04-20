@@ -68,7 +68,6 @@ export const getUser = async (request: Request) => {
 
     return user;
   } catch (error) {
-    console.log("cash is run");
     throw logout(request);
   }
 };
