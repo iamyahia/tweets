@@ -51,6 +51,7 @@ export const getUserById = async (userId: string) => {
       firstName: true,
       lastName: true,
       email: true,
+      tweets: true,
     },
   });
 };

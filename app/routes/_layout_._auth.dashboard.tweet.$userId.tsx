@@ -7,17 +7,20 @@ import { Form, redirect, type LoaderFunctionArgs } from "react-router";
 import Modal from "../components/modal";
 import Tweet from "../components/tweet";
 
-import { getUserById } from "~/utils/users.server";
 import { emojiMap } from "~/utils/constants";
+import { getUserById } from "~/utils/users.server";
+import { createTweet } from "~/utils/tweets.server";
 
 import type { TColor, TEmoji } from "~/types/form.types";
 import type { Route } from "./+types/_layout_._auth.dashboard.tweet.$userId";
+import { requireUserId } from "~/utils/session.server";
 
 const schema = zod.object({
   message: zod.string().min(3).max(150),
   backgroundColor: zod.enum(["RED", "WHITE", "BLUE", "GREEN", "YELLOW"]),
   textColor: zod.enum(["RED", "WHITE", "BLUE", "GREEN", "YELLOW"]),
   emoji: zod.enum(["SMILE", "SAD", "ANGRY", "LOVE", "THUMBS_UP"]),
+  recipientId: zod.string().min(10, "Recipient is required"),
 });
 
 type FormData = zod.infer<typeof schema>;
@@ -30,26 +33,39 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
   if (!userId || typeof userId !== "string") {
     return redirect("/dashboard");
   }
-  const userInfo = await getUserById(userId);
-  return userInfo;
+  const recipient = await getUserById(userId);
+  return recipient;
 };
 
 export const action = async ({ request }: Route.ActionArgs) => {
-  console.log("action irun ✅✅");
+  // TODO: we could provide userId, directly in _auth.tsx file, think about it.
+  const userId = await requireUserId(request);
+
   const {
     errors,
     data,
     receivedValues: defaultValues,
   } = await getValidatedFormData<FormData>(request, resolver);
-  console.log("receivedValues", defaultValues);
+
   if (errors) {
     return { errors, defaultValues };
   }
-  return data;
+
+  await createTweet({
+    backgroundColor: data.backgroundColor,
+    emoji: data.emoji,
+    message: data.message,
+    textColor: data.textColor,
+    userId: userId,
+    recipientId: data.recipientId,
+  });
+
+  return redirect("/dashboard");
 };
 
 export default function TweetModal({
-  loaderData: userInfo,
+  loaderData: recipient,
+  params,
 }: Route.ComponentProps) {
   const [isModalOpen, setIsModalOpen] = useState(true);
 
@@ -67,7 +83,6 @@ export default function TweetModal({
     resolver,
   });
 
-  console.log("userinfo", userInfo);
   return (
     <div>
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
@@ -76,6 +91,11 @@ export default function TweetModal({
           className="p-4 bg-gray-50 rounded shadow-md"
           onSubmit={handleSubmit}
         >
+          <input
+            type="hidden"
+            value={params.userId}
+            {...register("recipientId")}
+          />
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col items-center">
               <img
@@ -84,8 +104,8 @@ export default function TweetModal({
                 className="w-16 h-16 rounded-full"
               />
               <div className="mt-2 text-center">
-                <div>{userInfo?.firstName + " " + userInfo?.lastName}</div>
-                <div className="text-sm text-gray-600">{userInfo?.email}</div>
+                <div>{recipient?.firstName + " " + recipient?.lastName}</div>
+                <div className="text-sm text-gray-600">{recipient?.email}</div>
               </div>
             </div>
             <div>
@@ -183,8 +203,8 @@ export default function TweetModal({
               <span>Preview Section with Emoji</span>
               <div className="p-2 border border-gray-300 rounded">
                 <Tweet
-                  firstName={userInfo?.firstName || ""}
-                  lastName={userInfo?.lastName || ""}
+                  firstName={recipient?.firstName || ""}
+                  lastName={recipient?.lastName || ""}
                   backgroundColor={backgroundColor}
                   message={message}
                   emoji={emoji}

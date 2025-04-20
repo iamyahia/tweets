@@ -21,6 +21,7 @@ async function getUserSession(request: Request) {
 }
 
 //? This function will be used if we want the current user id.
+//TODO: I think we can remove this function because we have better validation handling in the requireUserId function.
 export const getUserId = async (request: Request) => {
   {
     const session = await getUserSession(request);
