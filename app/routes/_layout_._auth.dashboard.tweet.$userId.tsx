@@ -5,12 +5,13 @@ import { getValidatedFormData, useRemixForm } from "remix-hook-form";
 import { Form, redirect, type LoaderFunctionArgs } from "react-router";
 
 import Modal from "../components/modal";
-// import Tweet from "../components/tweet";
+import Tweet from "../components/tweet";
 
 import { getUserById } from "~/utils/users.server";
-
-import type { Route } from "./+types/_layout_._auth.dashboard.tweet.$userId";
 import { emojiMap } from "~/utils/constants";
+
+import type { TColor, TEmoji } from "~/types/form.types";
+import type { Route } from "./+types/_layout_._auth.dashboard.tweet.$userId";
 
 const schema = zod.object({
   message: zod.string().min(3).max(150),
@@ -52,6 +53,11 @@ export default function TweetModal({
 }: Route.ComponentProps) {
   const [isModalOpen, setIsModalOpen] = useState(true);
 
+  const [emoji, setEmoji] = useState<TEmoji>("SMILE");
+  const [backgroundColor, setBackgroundColor] = useState<TColor>("RED");
+  const [textColor, setTextColor] = useState<TColor>("WHITE");
+  const [message, setMessage] = useState("");
+
   const {
     handleSubmit,
     register,
@@ -61,6 +67,7 @@ export default function TweetModal({
     resolver,
   });
 
+  console.log("userinfo", userInfo);
   return (
     <div>
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
@@ -87,6 +94,10 @@ export default function TweetModal({
                 className="w-full p-2 border border-gray-300 rounded mb-4"
                 rows={4}
                 {...register("message", { required: true })}
+                value={message}
+                onChange={(e) => {
+                  setMessage(e.target.value);
+                }}
               />
               {errors.message && (
                 <span className="text-red-500">{errors.message.message}</span>
@@ -97,6 +108,10 @@ export default function TweetModal({
                   <select
                     className={`border border-gray-300 rounded p-2`}
                     {...register("backgroundColor")}
+                    value={backgroundColor}
+                    onChange={(e) => {
+                      setBackgroundColor(e.target.value as TColor);
+                    }}
                   >
                     <option>RED</option>
                     <option>BLUE</option>
@@ -116,6 +131,10 @@ export default function TweetModal({
                   <select
                     className="border border-gray-300 rounded p-2"
                     {...register("textColor")}
+                    value={textColor}
+                    onChange={(e) => {
+                      setTextColor(e.target.value as TColor);
+                    }}
                   >
                     <option>RED</option>
                     <option>BLUE</option>
@@ -133,8 +152,13 @@ export default function TweetModal({
                 <div className="flex flex-col gap-4">
                   <label>Emoji</label>
                   <select
-                    className="border border-gray-300 rounded p-2"
                     {...register("emoji")}
+                    className="border border-gray-300 rounded p-2"
+                    value={emoji}
+                    onChange={(e) => {
+                      setEmoji(e.target.value as TEmoji);
+                      console.log("emoji", e.target.value);
+                    }}
                   >
                     <option value="SMILE">{emojiMap["SMILE"]}</option>
                     <option value="SAD">{emojiMap["SAD"]}</option>
@@ -151,15 +175,23 @@ export default function TweetModal({
           </div>
           <div className="mt-4 grid grid-cols-2 gap-4 items-center">
             <div
-              className="p-2 border border-gray-300 rounded"
               style={{
                 backgroundColor: "/* selected background color */",
                 color: "/* selected text color */",
               }}
             >
-              Preview Section with Emoji
+              <span>Preview Section with Emoji</span>
+              <div className="p-2 border border-gray-300 rounded">
+                <Tweet
+                  firstName={userInfo?.firstName || ""}
+                  lastName={userInfo?.lastName || ""}
+                  backgroundColor={backgroundColor}
+                  message={message}
+                  emoji={emoji}
+                  textColor={textColor}
+                />
+              </div>
             </div>
-
             <div>
               <button
                 type="submit"
