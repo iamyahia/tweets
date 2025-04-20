@@ -65,3 +65,22 @@ export const getFilteredTweets = async (
     },
   });
 };
+
+export const getRecentTweets = async () => {
+  return await prisma.tweet.findMany({
+    take: 3,
+    orderBy: {
+      createdAt: "desc",
+    },
+    select: {
+      style_emoji: true,
+      recipient: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+    },
+  });
+};

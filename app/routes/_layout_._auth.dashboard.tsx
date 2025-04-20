@@ -5,24 +5,26 @@ import UserPanel from "~/components/user-panel";
 
 import { getOtherUsers } from "~/utils/users.server";
 import { requireUserId } from "~/utils/session.server";
-import { getFilteredTweets } from "~/utils/tweets.server";
+import { getFilteredTweets, getRecentTweets } from "~/utils/tweets.server";
 
 import type { Route } from "./+types/_layout_._auth.dashboard";
+import RecentBar from "~/components/recent-bar";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userId = await requireUserId(request);
   // TODO: we can make more enhancement between getOtherUsers + requireUserId, by removing one of them or passing userId to getOtherUsers or stuffs like that.
   const users = await getOtherUsers(request);
   const tweets = await getFilteredTweets(userId, {}, {});
-
+  const recentTweets = await getRecentTweets();
   return {
     users,
     tweets,
+    recentTweets,
   };
 };
 
 export default function Dashboard({ loaderData }: Route.ComponentProps) {
-  const { tweets, users } = loaderData;
+  const { tweets, users, recentTweets } = loaderData;
   return (
     <>
       <Outlet />
@@ -30,7 +32,7 @@ export default function Dashboard({ loaderData }: Route.ComponentProps) {
         <UserPanel users={users} />
         <div className="flex-1 flex-flex-col">
           {/* Search bar */}
-          <div className="flex-1 flex">
+          <div className="flex-1 flex h-full">
             <div className="w-full p-10 flex flex-col gap-y-4">
               {tweets.map((tweet) => (
                 <Tweet
@@ -45,6 +47,7 @@ export default function Dashboard({ loaderData }: Route.ComponentProps) {
               ))}
             </div>
             {/* Recent tweets */}
+            <RecentBar tweets={recentTweets} />
           </div>
         </div>
       </div>
