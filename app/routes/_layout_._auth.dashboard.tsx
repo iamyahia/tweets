@@ -46,7 +46,6 @@ export default function Dashboard({ loaderData }: Route.ComponentProps) {
                 />
               ))}
             </div>
-            {/* Recent tweets */}
             <RecentBar tweets={recentTweets} />
           </div>
         </div>
