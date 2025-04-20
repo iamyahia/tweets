@@ -1,3 +1,4 @@
+import type { Prisma } from "@prisma/client";
 import { prisma } from "./prisma.server";
 
 import type { TColor, TEmoji } from "~/types/form.types";
@@ -34,6 +35,33 @@ export const createTweet = async ({
       style_bg: backgroundColor,
       style_emoji: emoji,
       style_text_color: textColor,
+    },
+  });
+};
+
+export const getFilteredTweets = async (
+  userId: string,
+  sortFilter: Prisma.TweetOrderByWithRelationInput,
+  whereFilter: Prisma.TweetWhereInput
+) => {
+  return await prisma.tweet.findMany({
+    where: {
+      recipientId: userId,
+      ...whereFilter,
+    },
+    orderBy: sortFilter,
+    select: {
+      id: true,
+      message: true,
+      style_bg: true,
+      style_emoji: true,
+      style_text_color: true,
+      author: {
+        select: {
+          firstName: true,
+          lastName: true,
+        },
+      },
     },
   });
 };
