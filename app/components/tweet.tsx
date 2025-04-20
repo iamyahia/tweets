@@ -1,7 +1,8 @@
 import type { Tweet } from "@prisma/client";
-import type { TColor, TEmoji } from "~/types/form.types";
 
 import { backgroundColorMap, colorMap, emojiMap } from "~/utils/constants";
+
+import type { TColor, TEmoji } from "~/types/form.types";
 
 type TweetProps = {
   emoji: TEmoji;
@@ -11,6 +12,7 @@ type TweetProps = {
   textColor: TColor;
   backgroundColor: TColor;
 };
+
 export default function Tweet({
   emoji = "THUMBS_UP",
   message,
