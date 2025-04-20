@@ -18,7 +18,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData();
 
-  const redirectTo = new URL(request.url).searchParams.get("redirectTo") || "/";
+  const redirectTo =
+    new URL(request.url).searchParams.get("redirectTo") || "/dashboard";
   //! There's no validation for the fields, so we can assume that the user has filled in all the fields correctly.
   return await login(
     {
