@@ -177,7 +177,6 @@ export default function TweetModal({
                     value={emoji}
                     onChange={(e) => {
                       setEmoji(e.target.value as TEmoji);
-                      console.log("emoji", e.target.value);
                     }}
                   >
                     <option value="SMILE">{emojiMap["SMILE"]}</option>
