@@ -21,3 +21,18 @@ export const emojiMap = {
   LOVE: "😍",
   THUMBS_UP: "👍",
 };
+
+export const sortOptions = [
+  {
+    label: "Date",
+    value: "date",
+  },
+  {
+    label: "Sender Name",
+    value: "sender",
+  },
+  {
+    label: "Emoji",
+    value: "emoji",
+  },
+];
