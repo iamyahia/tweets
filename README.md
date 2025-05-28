@@ -56,11 +56,6 @@ Here’s what I aimed to learn and showcase:
 
 ---
 
-## 📸 Preview (Optional)
-
-> Add screenshots or a Loom demo if available.
-
----
 
 ## 🚀 Getting Started
 
